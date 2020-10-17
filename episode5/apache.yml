@@ -1,0 +1,55 @@
+---
+
+- name: Intall Apache
+  hosts: all
+  become: true
+
+  handlers:
+    - name: restart apache handler
+      service:
+        name: "{{ apache_service }}"
+        state: restarted 
+
+  pre_tasks:
+    - name: Load Variable Files 
+      include_vars: "{{ item }}"
+      with_first_found:
+        - vars/apache_{{ ansible_os_family }}.yml
+        - vars/apache_default.yml
+
+  tasks:
+    - name: Ensure apache is installed
+      package:
+        name: "{{ apache_package }}"
+        state: present 
+
+    # - name: Add env variable to remote user shell
+    #   lineinfile:
+    #     dest: "~/.bash_profile"
+    #     regexp: '^ENV_VAR='
+    #     line: 'ENV_VAR=value'
+    #   become: false 
+
+    # - name: Register a value from an env variable 
+    #   shell: 'source ~/.bash_profile && echo $ENV_VAR'
+    #   register: foo
+    
+    # - debug: msg="The env variable is {{ foo.stdout }}"
+
+    - name: Copy apache config file
+      copy:
+        src: files/test.conf
+        dest: "{{ apache_config_dir }}/test.conf"
+      notify: restart apache handler
+     
+     #if this is not declared handlers run at the end of the playbook
+    - name: Make sure handlers are flushed immediately
+      meta: flush_handlers 
+
+    - name: Ensure apache is started and enabled
+      service:
+        name: "{{ apache_service }}"
+        state: started
+        enabled: true 
+
+
