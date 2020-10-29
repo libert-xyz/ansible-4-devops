@@ -1,0 +1,9 @@
+---
+
+- name: Install APP ex
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Clone app ex.
+      command: date

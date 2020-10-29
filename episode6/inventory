@@ -1,0 +1,12 @@
+[centos]
+54.165.203.151 ansible_user=centos
+
+[ubuntu]
+3.236.103.206 ansible_user=ubuntu
+
+#Group has all groups
+[multi:children]
+centos
+ubuntu
+
+

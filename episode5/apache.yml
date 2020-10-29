@@ -5,10 +5,7 @@
   become: true
 
   handlers:
-    - name: restart apache handler
-      service:
-        name: "{{ apache_service }}"
-        state: restarted 
+    - import_tasks: handlers/handlers.yml
 
   pre_tasks:
     - name: Load Variable Files 
@@ -52,4 +49,4 @@
         state: started
         enabled: true 
 
-
+- import_playbook: app.yml
